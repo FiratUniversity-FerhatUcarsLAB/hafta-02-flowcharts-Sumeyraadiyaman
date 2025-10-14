@@ -1,0 +1,53 @@
+digraph G {
+rankdir=TB; // Yukarıdan aşağıya
+
+start [shape=oval, label="BAŞLA"];
+login [shape=diamond, label="Giriş başarılı mı?"];
+login_no [shape=oval, label="BİTİR"];
+kategori [shape=box, label="Kategori seç"];
+urun_sec [shape=diamond, label="Ürün seçildi mi?"];
+stok [shape=diamond, label="Stok var mı?"];
+sepete_ekle [shape=box, label="Sepete ekle"];
+stok_yok [shape=box, label="Stok yetersiz"];
+sepet [shape=box, label="Sepeti düzenle"];
+indirim [shape=diamond, label="İndirim kodu geçerli mi?"];
+indirim_uygula [shape=box, label="İndirim uygula"];
+min_tutar [shape=diamond, label="Toplam ≥ 50 TL mi?"];
+min_yetersiz [shape=oval, label="BİTİR"];
+kargo [shape=diamond, label="Toplam ≥ 200 TL mi?"];
+kargo_0 [shape=box, label="Kargo: Ücretsiz"];
+kargo_25 [shape=box, label="Kargo: 25 TL"];
+odeme [shape=diamond, label="Ödeme yöntemi seçildi mi?"];
+odeme_yok [shape=oval, label="BİTİR"];
+onay [shape=box, label="Siparişi onayla"];
+end [shape=oval, label="BİTİR"];
+
+// Akışlar
+start -> login;
+login -> kategori [label="EVET"];
+login -> login_no [label="HAYIR"];
+
+kategori -> urun_sec;
+urun_sec -> stok [label="EVET"];
+stok -> sepete_ekle [label="EVET"];
+stok -> stok_yok [label="HAYIR"];
+sepete_ekle -> sepet;
+stok_yok -> kategori;
+
+sepet -> indirim;
+indirim -> indirim_uygula [label="EVET"];
+indirim -> min_tutar [label="HAYIR"];
+indirim_uygula -> min_tutar;
+
+min_tutar -> kargo [label="EVET"];
+min_tutar -> min_yetersiz [label="HAYIR"];
+
+kargo -> kargo_0 [label="EVET"];
+kargo -> kargo_25 [label="HAYIR"];
+kargo_0 -> odeme;
+kargo_25 -> odeme;
+
+odeme -> onay [label="EVET"];
+odeme -> odeme_yok [label="HAYIR"];
+onay -> end;
+}
