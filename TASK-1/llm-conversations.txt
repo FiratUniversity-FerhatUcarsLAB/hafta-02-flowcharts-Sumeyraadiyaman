@@ -1,0 +1,855 @@
+Kullanıcı:
+Bir ATM'den para çekme işleminin tüm adimlarin modelleyin
+Sistem Gereksinimleri:
+○ Kart takılır ve PIN sorulur o 3 hatali PIN girisinden sonra kart bloke olur (dongü) ◦ Bakiye sorgulanır 。 Cekilmek istenen tutar girilir Yetersiz bakiye kontrolü yapilr (koşul) . 20 TL'nin katlari olmalı (koşul) ◦ Günlük limit kontrolü (koşul) ◦ Para verilir ve fiş çikar ◦ Başka işlem yapmak ister misiniz? (döngü)ATM para çekme sistemi için detayli pseudocode yazmanı istiyorum. Sunlar içcermeli: PIN doğrulama (3 hak). bakiye kontrolü, tutar kontrolü (20 TL katlar). günlük limit kontrolü, işlem tekran seçeneği. Tüm adimları BASLA, OKU, YAZ, EĞER-iSE, DÖNGÜ yapıilarıyla yaz
+
+Yapay Zeka:
+Elbette, ATM'den para çekme işleminin tüm adımlarını içeren, belirtilen sistem gereksinimlerine ve yapılarına uygun detaylı pseudocode (sözde kod) aşağıda modellenmiştir.
+
+ATM Para Çekme Sistemi Pseudocode
+Bu pseudocode, bir kullanıcının ATM'de para çekme işlemini başından sonuna kadar nasıl gerçekleştireceğini adım adım gösterir. Değişkenler, döngüler ve koşul yapıları ile tüm senaryolar (başarılı işlem, hatalı PIN, yetersiz bakiye vb.) ele alınmıştır.
+
+BASLA
+
+// 1. Değişkenlerin ve Sabitlerin Tanımlanması
+TANIMLA SAYI: pinDenemeSayisi = 0
+TANIMLA SAYI: hesapBakiyesi = 5000 // Örnek bakiye
+TANIMLA SAYI: gunlukLimit = 7500 // Örnek günlük limit
+TANIMLA SAYI: bugunCekilenTutar = 1000 // Kullanıcının o gün daha önce çektiği tutar
+TANIMLA SAYI: cekilecekTutar
+TANIMLA METIN: girilenPIN
+TANIMLA METIN: dogruPIN = "1234" // Sistemde kayıtlı doğru PIN
+TANIMLA MANTIKSAL: pinDogruMu = YANLIS
+TANIMLA METIN: devamCevabi
+
+YAZ "Lütfen kartınızı takınız."
+
+// 2. PIN Doğrulama Döngüsü (3 deneme hakkı)
+DÖNGÜ (pinDenemeSayisi < 3 VE pinDogruMu == YANLIS)
+YAZ "Lütfen 4 haneli PIN kodunuzu giriniz:"
+OKU girilenPIN
+
+`EĞER (girilenPIN == dogruPIN) ISE`
+    `pinDogruMu = DOGRU`
+`DEGILSE`
+    `pinDenemeSayisi = pinDenemeSayisi + 1`
+    `YAZ "Hatalı PIN girdiniz. Kalan deneme hakkınız: ", (3 - pinDenemeSayisi)`
+`EĞER SONU`
+DÖNGÜ SONU
+
+// 3. PIN Bloke Kontrolü
+EĞER (pinDogruMu == YANLIS) ISE
+YAZ "3 kez hatalı PIN girdiniz. Kartınız bloke olmuştur. Lütfen şubenizle iletişime geçiniz."
+// Program burada sonlanır, başka işleme izin verilmez.
+DEGILSE
+// 4. Ana İşlem Döngüsü (Başka işlem yapmak için)
+DÖNGÜ (DOĞRU)
+YAZ "Hoş geldiniz. Lütfen yapmak istediğiniz işlemi seçiniz."
+YAZ "1- Para Çekme"
+YAZ "2- Bakiye Sorgulama"
+// Bu örnek sadece para çekmeye odaklanmıştır.
+
+    `YAZ "Çekmek istediğiniz tutarı giriniz:"`
+    `OKU cekilecekTutar`
+
+    `// 5. Tutar Kontrolleri (Koşul Blokları)`
+    
+    `// Koşul 1: 20 TL'nin katı mı?`
+    `EĞER (cekilecekTutar % 20 != 0) ISE`
+        `YAZ "Hata: Girdiğiniz tutar 20 TL ve katları olmalıdır."`
+    
+    `// Koşul 2: Bakiye yeterli mi?`
+    `DEGILSE EĞER (cekilecekTutar > hesapBakiyesi) ISE`
+        `YAZ "Hata: Hesabınızda yeterli bakiye bulunmamaktadır. Mevcut bakiyeniz: ", hesapBakiyesi, " TL"`
+    
+    `// Koşul 3: Günlük limit aşılıyor mu?`
+    `DEGILSE EĞER (cekilecekTutar + bugunCekilenTutar > gunlukLimit) ISE`
+        `YAZ "Hata: Bu işlemle günlük para çekme limitinizi (", gunlukLimit, " TL) aşacaksınız."`
+        `YAZ "Bugün çekebileceğiniz maksimum tutar: ", (gunlukLimit - bugunCekilenTutar), " TL"`
+    
+    `// Tüm koşullar sağlandıysa para çekme işlemi`
+    `DEGILSE`
+        `// 6. İşlemin Gerçekleştirilmesi`
+        `hesapBakiyesi = hesapBakiyesi - cekilecekTutar`
+        `bugunCekilenTutar = bugunCekilenTutar + cekilecekTutar`
+        
+        `YAZ "İşleminiz gerçekleştiriliyor..."`
+        `YAZ "Lütfen paranızı para verme haznesinden alınız."`
+        `YAZ "İşlem fişi yazdırılıyor. Lütfen fişinizi alınız."`
+        `YAZ "İşlem başarılı. Kalan bakiyeniz: ", hesapBakiyesi, " TL"`
+    `EĞER SONU`
+
+    `// 7. Başka İşlem Sorgulama Döngüsü`
+    `YAZ "Başka bir işlem yapmak ister misiniz? (E/H)"`
+    `OKU devamCevabi`
+
+    `EĞER (devamCevabi == "H" VEYA devamCevabi == "h") ISE`
+        `// Ana işlem döngüsünden çık`
+        `CIK`
+    `EĞER SONU`
+`DÖNGÜ SONU`
+
+`YAZ "İyi günler dileriz. Lütfen kartınızı almayı unutmayınız."`
+EĞER SONU
+
+BITIR
+
+Kullanıcı:
+kopyalayabileceğim bir metin halinde ver
+
+Yapay Zeka:
+Elbette, ATM para çekme sistemi için kopyalayabileceğiniz metin halindeki pseudocode aşağıdadır:
+
+BASLA
+
+// 1. Değişkenlerin ve Sabitlerin Tanımlanması
+TANIMLA SAYI: pinDenemeSayisi = 0
+TANIMLA SAYI: hesapBakiyesi = 5000 // Örnek bakiye
+TANIMLA SAYI: gunlukLimit = 7500 // Örnek günlük limit
+TANIMLA SAYI: bugunCekilenTutar = 1000 // Kullanıcının o gün daha önce çektiği tutar
+TANIMLA SAYI: cekilecekTutar
+TANIMLA METIN: girilenPIN
+TANIMLA METIN: dogruPIN = "1234" // Sistemde kayıtlı doğru PIN
+TANIMLA MANTIKSAL: pinDogruMu = YANLIS
+TANIMLA METIN: devamCevabi
+
+YAZ "Lütfen kartınızı takınız."
+
+// 2. PIN Doğrulama Döngüsü (3 deneme hakkı)
+DÖNGÜ (pinDenemeSayisi < 3 VE pinDogruMu == YANLIS)
+    YAZ "Lütfen 4 haneli PIN kodunuzu giriniz:"
+    OKU girilenPIN
+
+    EĞER (girilenPIN == dogruPIN) ISE
+        pinDogruMu = DOGRU
+    DEGILSE
+        pinDenemeSayisi = pinDenemeSayisi + 1
+        YAZ "Hatalı PIN girdiniz. Kalan deneme hakkınız: ", (3 - pinDenemeSayisi)
+    EĞER SONU
+DÖNGÜ SONU
+
+// 3. PIN Bloke Kontrolü
+EĞER (pinDogruMu == YANLIS) ISE
+    YAZ "3 kez hatalı PIN girdiniz. Kartınız bloke olmuştur. Lütfen şubenizle iletişime geçiniz."
+    // Program burada sonlanır, başka işleme izin verilmez.
+DEGILSE
+    // 4. Ana İşlem Döngüsü (Başka işlem yapmak için)
+    DÖNGÜ (DOĞRU)
+        YAZ "Hoş geldiniz. Lütfen yapmak istediğiniz işlemi seçiniz."
+        YAZ "1- Para Çekme"
+        YAZ "2- Bakiye Sorgulama"
+        // Bu örnek sadece para çekmeye odaklanmıştır.
+
+        YAZ "Çekmek istediğiniz tutarı giriniz:"
+        OKU cekilecekTutar
+
+        // 5. Tutar Kontrolleri (Koşul Blokları)
+        
+        // Koşul 1: 20 TL'nin katı mı?
+        EĞER (cekilecekTutar % 20 != 0) ISE
+            YAZ "Hata: Girdiğiniz tutar 20 TL ve katları olmalıdır."
+        
+        // Koşul 2: Bakiye yeterli mi?
+        DEGILSE EĞER (cekilecekTutar > hesapBakiyesi) ISE
+            YAZ "Hata: Hesabınızda yeterli bakiye bulunmamaktadır. Mevcut bakiyeniz: ", hesapBakiyesi, " TL"
+        
+        // Koşul 3: Günlük limit aşılıyor mu?
+        DEGILSE EĞER (cekilecekTutar + bugunCekilenTutar > gunlukLimit) ISE
+            YAZ "Hata: Bu işlemle günlük para çekme limitinizi (", gunlukLimit, " TL) aşacaksınız."
+            YAZ "Bugün çekebileceğiniz maksimum tutar: ", (gunlukLimit - bugunCekilenTutar), " TL"
+        
+        // Tüm koşullar sağlandıysa para çekme işlemi
+        DEGILSE
+            // 6. İşlemin Gerçekleştirilmesi
+            hesapBakiyesi = hesapBakiyesi - cekilecekTutar
+            bugunCekilenTutar = bugunCekilenTutar + cekilecekTutar
+            
+            YAZ "İşleminiz gerçekleştiriliyor..."
+            YAZ "Lütfen paranızı para verme haznesinden alınız."
+            YAZ "İşlem fişi yazdırılıyor. Lütfen fişinizi alınız."
+            YAZ "İşlem başarılı. Kalan bakiyeniz: ", hesapBakiyesi, " TL"
+        EĞER SONU
+
+        // 7. Başka İşlem Sorgulama Döngüsü
+        YAZ "Başka bir işlem yapmak ister misiniz? (E/H)"
+        OKU devamCevabi
+
+        EĞER (devamCevabi == "H" VEYA devamCevabi == "h") ISE
+            // Ana işlem döngüsünden çık
+            CIK
+        EĞER SONU
+    DÖNGÜ SONU
+
+    YAZ "İyi günler dileriz. Lütfen kartınızı almayı unutmayınız."
+EĞER SONU
+
+BITIR
+Kullanıcı:
+Bu pseudocode’u Graphviz DOT diline çevir. Başlla/Bitir için oval,
+ girdi/çıktı için parallelogram, işlem için box, karar için diamond kullan.
+ Tüm okları ve etiketleri ekle. Bu kodu bana verirken DOT Graphviz DOT dilinde olmasına dikkat et
+
+Yapay Zeka:
+Elbette, istediğiniz gereksinimlere uygun olarak ATM para çekme işleminin pseudocode'unu Graphviz DOT diline çevrilmiş hali aşağıdadır. Bu kodu kopyalayıp bir Graphviz görselleştirme aracında (örneğin online bir editörde) kullanarak akış şemasını oluşturabilirsiniz.
+
+Kod snippet'i
+
+digraph ATM_Flowchart {
+    rankdir=TB;
+    node [fontname="Arial", style=filled, fillcolor=lightyellow];
+    edge [fontname="Arial"];
+
+    // Node Tanımlamaları
+    start [label="BAŞLA", shape=oval, fillcolor=lightblue];
+    init_vars [label="Değişkenleri Tanımla\npinDenemeSayisi = 0\npinDogruMu = YANLIS\n...", shape=box];
+    kart_tak [label="YAZ: 'Lütfen kartınızı takınız.'", shape=parallelogram];
+    
+    // PIN Döngüsü
+    pin_loop_check [label="pinDenemeSayisi < 3 VE\npinDogruMu == YANLIS?", shape=diamond, fillcolor=lightcoral];
+    ask_pin [label="YAZ: 'Lütfen PIN giriniz.'", shape=parallelogram];
+    read_pin [label="OKU: girilenPIN", shape=parallelogram];
+    pin_check [label="girilenPIN == dogruPIN?", shape=diamond, fillcolor=lightcoral];
+    set_pin_correct [label="İşlem: pinDogruMu = DOGRU", shape=box];
+    increment_pin_try [label="İşlem: pinDenemeSayisi++", shape=box];
+    show_pin_error [label="YAZ: 'Hatalı PIN. Kalan hak: '...", shape=parallelogram];
+
+    // PIN Bloke
+    pin_blocked_check [label="pinDogruMu == YANLIS?", shape=diamond, fillcolor=lightcoral];
+    show_blocked [label="YAZ: 'Kartınız bloke oldu.'", shape=parallelogram];
+    
+    // Ana İşlem Menüsü
+    main_menu [label="YAZ: 'Hoş geldiniz. Çekmek\nistediğiniz tutarı giriniz.'", shape=parallelogram];
+    read_amount [label="OKU: cekilecekTutar", shape=parallelogram];
+
+    // Tutar Kontrolleri
+    check_multiple_20 [label="cekilecekTutar % 20 != 0?", shape=diamond, fillcolor=lightcoral];
+    show_error_20 [label="YAZ: 'Hata: Tutar 20 TL ve\nkatları olmalıdır.'", shape=parallelogram];
+    
+    check_balance [label="cekilecekTutar > hesapBakiyesi?", shape=diamond, fillcolor=lightcoral];
+    show_error_balance [label="YAZ: 'Hata: Yetersiz bakiye.'", shape=parallelogram];
+
+    check_daily_limit [label="cekilecekTutar + bugunCekilenTutar\n> gunlukLimit?", shape=diamond, fillcolor=lightcoral];
+    show_error_limit [label="YAZ: 'Hata: Günlük limit aşıldı.'", shape=parallelogram];
+
+    // İşlem Başarılı
+    process_transaction [label="İşlem:\nhesapBakiyesi -= cekilecekTutar\nbugunCekilenTutar += cekilecekTutar", shape=box, fillcolor=lightgreen];
+    give_cash [label="YAZ: 'Paranızı ve fişinizi alınız.'\nYAZ: 'Kalan bakiye: ...'", shape=parallelogram, fillcolor=lightgreen];
+
+    // Başka İşlem
+    ask_another_op [label="YAZ: 'Başka işlem yapmak\nister misiniz? (E/H)'", shape=parallelogram];
+    read_another_op [label="OKU: devamCevabi", shape=parallelogram];
+    check_another_op [label="devamCevabi == 'H'?", shape=diamond, fillcolor=lightcoral];
+    
+    // Bitiş
+    show_goodbye [label="YAZ: 'İyi günler dileriz.\nKartınızı alınız.'", shape=parallelogram];
+    end_node [label="BİTİR", shape=oval, fillcolor=lightblue];
+
+    // Akış Okları (Edges)
+    start -> init_vars;
+    init_vars -> kart_tak;
+    kart_tak -> pin_loop_check;
+
+    // PIN Döngüsü Akışı
+    pin_loop_check -> ask_pin [label="Evet"];
+    ask_pin -> read_pin;
+    read_pin -> pin_check;
+    pin_check -> set_pin_correct [label="Doğru"];
+    set_pin_correct -> pin_loop_check;
+    pin_check -> increment_pin_try [label="Yanlış"];
+    increment_pin_try -> show_pin_error;
+    show_pin_error -> pin_loop_check;
+
+    // PIN Sonrası Akış
+    pin_loop_check -> pin_blocked_check [label="Hayır"];
+    pin_blocked_check -> show_blocked [label="Evet\n(PIN hala yanlış)"];
+    show_blocked -> end_node;
+    pin_blocked_check -> main_menu [label="Hayır\n(PIN doğru)"];
+
+    // Ana İşlem Akışı
+    main_menu -> read_amount;
+    read_amount -> check_multiple_20;
+
+    // Tutar Kontrol Akışları
+    check_multiple_20 -> show_error_20 [label="Evet"];
+    check_multiple_20 -> check_balance [label="Hayır"];
+    
+    check_balance -> show_error_balance [label="Evet"];
+    check_balance -> check_daily_limit [label="Hayır"];
+
+    check_daily_limit -> show_error_limit [label="Evet"];
+    check_daily_limit -> process_transaction [label="Hayır"];
+
+    // Hata Mesajlarından Sonra Başka İşlem Sorusuna Gitme
+    show_error_20 -> ask_another_op;
+    show_error_balance -> ask_another_op;
+    show_error_limit -> ask_another_op;
+
+    // Başarılı İşlem Akışı
+    process_transaction -> give_cash;
+    give_cash -> ask_another_op;
+
+    // Başka İşlem Döngüsü
+    ask_another_op -> read_another_op;
+    read_another_op -> check_another_op;
+    check_another_op -> main_menu [label="Hayır (Devam Et)"];
+    check_another_op -> show_goodbye [label="Evet (Bitir)"];
+    
+    show_goodbye -> end_node;
+}
+Kullanıcı:
+ digraph G {
+ rankdir=TB; // Yukarıdan a¸sa˘gıya
+ start [shape=oval, label="BAS¸LA"];
+ input [shape=parallelogram, label="OKU x"];
+ process [shape=box, label="y = x * 2"];
+ output [shape=parallelogram, label="YAZ y"];
+ end [shape=oval, label="B_ IT_ IR"];
+ start -> input -> process -> output -> end;
+ } dot dilini yazarken bu kodu örnek al
+
+Yapay Zeka:
+Elbette, ATM para çekme akışını Graphviz DOT dilinde, belirttiğiniz kurallara ve örnek koda uygun olarak aşağıda bulabilirsiniz. Bu kodu kopyalayıp bir Graphviz görselleştirme aracında kullanarak akış şemasını oluşturabilirsiniz.
+
+Graphviz DOT Kodu
+Kod snippet'i
+
+digraph ATM_Flowchart {
+    // Genel Ayarlar: Akış yönü yukarıdan aşağıya, font ve stil tanımlamaları
+    rankdir=TB;
+    node [fontname="Arial", style=filled, fillcolor=lightyellow];
+    edge [fontname="Arial"];
+
+    // 1. Düğüm (Node) Tanımlamaları
+    
+    // Başlangıç ve Bitiş
+    start [shape=oval, label="BAŞLA", fillcolor=lightblue];
+    end_node [shape=oval, label="BİTİR", fillcolor=lightblue];
+
+    // Girdi / Çıktı (Input / Output)
+    kart_tak [shape=parallelogram, label="YAZ: 'Lütfen kartınızı takınız.'"];
+    ask_pin [shape=parallelogram, label="YAZ: 'Lütfen PIN giriniz.'"];
+    read_pin [shape=parallelogram, label="OKU: girilenPIN"];
+    show_pin_error [shape=parallelogram, label="YAZ: 'Hatalı PIN. Kalan hak...'"];
+    show_blocked [shape=parallelogram, label="YAZ: 'Kartınız bloke oldu.'"];
+    main_menu [shape=parallelogram, label="YAZ: 'Çekmek istediğiniz\ntutarı giriniz.'"];
+    read_amount [shape=parallelogram, label="OKU: cekilecekTutar"];
+    show_error_20 [shape=parallelogram, label="YAZ: 'Hata: Tutar 20 TL ve\nkatları olmalıdır.'"];
+    show_error_balance [shape=parallelogram, label="YAZ: 'Hata: Yetersiz bakiye.'"];
+    show_error_limit [shape=parallelogram, label="YAZ: 'Hata: Günlük limit aşıldı.'"];
+    give_cash [shape=parallelogram, label="YAZ: 'Paranızı ve fişinizi alınız.'\nYAZ: 'Kalan bakiye: ...'", fillcolor=lightgreen];
+    ask_another_op [shape=parallelogram, label="YAZ: 'Başka işlem yapmak\nister misiniz? (E/H)'"];
+    read_another_op [shape=parallelogram, label="OKU: devamCevabi"];
+    show_goodbye [shape=parallelogram, label="YAZ: 'İyi günler dileriz.\nKartınızı alınız.'"];
+
+    // İşlem (Process)
+    init_vars [shape=box, label="Değişkenleri Tanımla\npinDenemeSayisi = 0\npinDogruMu = YANLIS"];
+    set_pin_correct [shape=box, label="İşlem: pinDogruMu = DOGRU"];
+    increment_pin_try [shape=box, label="İşlem: pinDenemeSayisi++"];
+    process_transaction [shape=box, label="İşlem:\nhesapBakiyesi -= cekilecekTutar\nbugunCekilenTutar += cekilecekTutar", fillcolor=lightgreen];
+
+    // Karar (Decision)
+    pin_loop_check [shape=diamond, label="pinDenemeSayisi < 3 VE\npinDogruMu == YANLIS?", fillcolor=lightcoral];
+    pin_check [shape=diamond, label="girilenPIN == dogruPIN?", fillcolor=lightcoral];
+    pin_blocked_check [shape=diamond, label="pinDogruMu == YANLIS?", fillcolor=lightcoral];
+    check_multiple_20 [shape=diamond, label="cekilecekTutar % 20 != 0?", fillcolor=lightcoral];
+    check_balance [shape=diamond, label="cekilecekTutar > hesapBakiyesi?", fillcolor=lightcoral];
+    check_daily_limit [shape=diamond, label="cekilecekTutar + bugunCekilenTutar\n> gunlukLimit?", fillcolor=lightcoral];
+    check_another_op [shape=diamond, label="devamCevabi == 'H'?", fillcolor=lightcoral];
+    
+    // 2. Akış Okları (Edges)
+    
+    // Başlangıç ve PIN döngüsü
+    start -> init_vars -> kart_tak -> pin_loop_check;
+    
+    pin_loop_check -> ask_pin [label="Evet"];
+    ask_pin -> read_pin -> pin_check;
+    pin_check -> set_pin_correct [label="Doğru"];
+    pin_check -> increment_pin_try [label="Yanlış"];
+    increment_pin_try -> show_pin_error -> pin_loop_check;
+    set_pin_correct -> pin_loop_check;
+
+    // PIN döngüsü sonrası
+    pin_loop_check -> pin_blocked_check [label="Hayır"];
+    pin_blocked_check -> show_blocked [label="Evet (PIN hala yanlış)"];
+    pin_blocked_check -> main_menu [label="Hayır (PIN doğru)"];
+    show_blocked -> end_node;
+    
+    // Ana işlem ve kontroller
+    main_menu -> read_amount -> check_multiple_20;
+    
+    check_multiple_20 -> show_error_20 [label="Evet"];
+    check_multiple_20 -> check_balance [label="Hayır"];
+    
+    check_balance -> show_error_balance [label="Evet"];
+    check_balance -> check_daily_limit [label="Hayır"];
+    
+    check_daily_limit -> show_error_limit [label="Evet"];
+    check_daily_limit -> process_transaction [label="Hayır"];
+    
+    // Başarılı işlem akışı
+    process_transaction -> give_cash;
+    
+    // Hata ve başarılı işlem sonrası ortak nokta
+    give_cash -> ask_another_op;
+    show_error_20 -> ask_another_op;
+    show_error_balance -> ask_another_op;
+    show_error_limit -> ask_another_op;
+
+    // Başka işlem döngüsü
+    ask_another_op -> read_another_op -> check_another_op;
+    check_another_op -> main_menu [label="Hayır (Devam Et)"];
+    check_another_op -> show_goodbye [label="Evet (Bitir)"];
+    
+    // Bitiş
+    show_goodbye -> end_node;
+}
+Kullanıcı:
+syntax error in line 36 scanning a quoted string (missing endquote? longer than 16384?) String starting:"pinDenemeSayisi < 3 VE\npinDog
+
+Yapay Zeka:
+Haklısınız, bu hata bazı Graphviz yorumlayıcılarının tırnak içindeki <, >, == gibi özel karakterleri yanlış işlemesinden kaynaklanabiliyor. Bu sorunu çözmek için kod benzeri ifadeleri daha basit ve metin tabanlı sorularla değiştirdim.
+
+Aşağıda, bu hatayı gideren ve belirttiğiniz stile tam olarak uyan düzeltilmiş DOT kodunu bulabilirsiniz.
+
+Düzeltilmiş Graphviz DOT Kodu
+Kod snippet'i
+
+digraph ATM_Flowchart {
+    // Genel Ayarlar: Akış yönü yukarıdan aşağıya
+    rankdir=TB;
+    node [fontname="Arial", style=filled, fillcolor=lightyellow];
+    edge [fontname="Arial"];
+
+    // 1. Düğüm (Node) Tanımlamaları
+    
+    // Başlangıç ve Bitiş
+    start [shape=oval, label="BAŞLA", fillcolor=lightblue];
+    end_node [shape=oval, label="BİTİR", fillcolor=lightblue];
+
+    // Girdi / Çıktı (Input / Output)
+    kart_tak [shape=parallelogram, label="YAZ: 'Lütfen kartınızı takınız.'"];
+    ask_pin [shape=parallelogram, label="YAZ: 'Lütfen PIN giriniz.'"];
+    read_pin [shape=parallelogram, label="OKU: girilenPIN"];
+    show_pin_error [shape=parallelogram, label="YAZ: 'Hatalı PIN. Kalan hak...'"];
+    show_blocked [shape=parallelogram, label="YAZ: 'Kartınız bloke oldu.'"];
+    main_menu [shape=parallelogram, label="YAZ: 'Çekmek istediğiniz\ntutarı giriniz.'"];
+    read_amount [shape=parallelogram, label="OKU: cekilecekTutar"];
+    show_error_20 [shape=parallelogram, label="YAZ: 'Hata: Tutar 20 TL ve\nkatları olmalıdır.'"];
+    show_error_balance [shape=parallelogram, label="YAZ: 'Hata: Yetersiz bakiye.'"];
+    show_error_limit [shape=parallelogram, label="YAZ: 'Hata: Günlük limit aşıldı.'"];
+    give_cash [shape=parallelogram, label="YAZ: 'Paranızı ve fişinizi alınız.'\nYAZ: 'Kalan bakiye: ...'", fillcolor=lightgreen];
+    ask_another_op [shape=parallelogram, label="YAZ: 'Başka işlem yapmak\nister misiniz? (E/H)'"];
+    read_another_op [shape=parallelogram, label="OKU: devamCevabi"];
+    show_goodbye [shape=parallelogram, label="YAZ: 'İyi günler dileriz.\nKartınızı alınız.'"];
+
+    // İşlem (Process)
+    init_vars [shape=box, label="Değişkenleri Tanımla\npinDenemeSayisi = 0\npinDogruMu = YANLIS"];
+    set_pin_correct [shape=box, label="İşlem: pinDogruMu = DOGRU"];
+    increment_pin_try [shape=box, label="İşlem: pinDenemeSayisi++"];
+    process_transaction [shape=box, label="İşlem:\nhesapBakiyesi -= cekilecekTutar\nbugunCekilenTutar += cekilecekTutar", fillcolor=lightgreen];
+
+    // Karar (Decision) - DÜZELTİLMİŞ ETİKETLER
+    pin_loop_check [shape=diamond, label="Deneme < 3 VE\nPIN Yanlış mı?", fillcolor=lightcoral];
+    pin_check [shape=diamond, label="PIN Doğru mu?", fillcolor=lightcoral];
+    pin_blocked_check [shape=diamond, label="PIN Hala Yanlış mı?", fillcolor=lightcoral];
+    check_multiple_20 [shape=diamond, label="Tutar 20'nin Katı Değil mi?", fillcolor=lightcoral];
+    check_balance [shape=diamond, label="Bakiye Yetersiz mi?", fillcolor=lightcoral];
+    check_daily_limit [shape=diamond, label="Günlük Limit Aşıldı mı?", fillcolor=lightcoral];
+    check_another_op [shape=diamond, label="Cevap 'H' mi?", fillcolor=lightcoral];
+    
+    // 2. Akış Okları (Edges)
+    
+    start -> init_vars -> kart_tak -> pin_loop_check;
+    
+    pin_loop_check -> ask_pin [label="Evet"];
+    ask_pin -> read_pin -> pin_check;
+    pin_check -> set_pin_correct [label="Doğru"];
+    pin_check -> increment_pin_try [label="Yanlış"];
+    increment_pin_try -> show_pin_error -> pin_loop_check;
+    set_pin_correct -> pin_loop_check;
+
+    pin_loop_check -> pin_blocked_check [label="Hayır"];
+    pin_blocked_check -> show_blocked [label="Evet (PIN hala yanlış)"];
+    pin_blocked_check -> main_menu [label="Hayır (PIN doğru)"];
+    show_blocked -> end_node;
+    
+    main_menu -> read_amount -> check_multiple_20;
+    
+    check_multiple_20 -> show_error_20 [label="Evet"];
+    check_multiple_20 -> check_balance [label="Hayır"];
+    
+    check_balance -> show_error_balance [label="Evet"];
+    check_balance -> check_daily_limit [label="Hayır"];
+    
+    check_daily_limit -> show_error_limit [label="Evet"];
+    check_daily_limit -> process_transaction [label="Hayır"];
+    
+    process_transaction -> give_cash;
+    
+    give_cash -> ask_another_op;
+    show_error_20 -> ask_another_op;
+    show_error_balance -> ask_another_op;
+    show_error_limit -> ask_another_op;
+
+    ask_another_op -> read_another_op -> check_another_op;
+    check_another_op -> main_menu [label="Hayır (Devam Et)"];
+    check_another_op -> show_goodbye [label="Evet (Bitir)"];
+    
+    show_goodbye -> end_node;
+}
+Kullanıcı:
+Şablonda kullanılacak okların kodunu yazmamışsın. Bu okların kodunu yaz.Ayrıca bitirme işlemini yaparken son satıra } işaretini eklemeyi unutma
+
+Yapay Zeka:
+Kesinlikle haklısınız, geri bildiriminiz için teşekkür ederim. Anlaşılır olması adına, hem okları (kenarları) tanımlayan tüm bağlantı kodlarını hem de kod bloğunu doğru bir şekilde sonlandıran kapanış } işaretini içeren tam ve hatasız kodu aşağıda sunuyorum.
+
+Graphviz DOT dilinde oklar, iki düğüm (şekil) arasına -> işareti konularak oluşturulur. Aşağıdaki kodda start -> init_vars; gibi satırlar bu bağlantıları, yani okları tanımlamaktadır.
+
+Tam ve Düzeltilmiş Graphviz DOT Kodu
+Kod snippet'i
+
+digraph ATM_Flowchart {
+    // Genel Ayarlar: Akış yönü yukarıdan aşağıya
+    rankdir=TB;
+    node [fontname="Arial", style=filled, fillcolor=lightyellow];
+    edge [fontname="Arial"];
+
+    // 1. Düğüm (Node) Tanımlamaları
+    
+    start [shape=oval, label="BAŞLA", fillcolor=lightblue];
+    end_node [shape=oval, label="BİTİR", fillcolor=lightblue];
+
+    kart_tak [shape=parallelogram, label="YAZ: 'Lütfen kartınızı takınız.'"];
+    ask_pin [shape=parallelogram, label="YAZ: 'Lütfen PIN giriniz.'"];
+    read_pin [shape=parallelogram, label="OKU: girilenPIN"];
+    show_pin_error [shape=parallelogram, label="YAZ: 'Hatalı PIN. Kalan hak...'"];
+    show_blocked [shape=parallelogram, label="YAZ: 'Kartınız bloke oldu.'"];
+    main_menu [shape=parallelogram, label="YAZ: 'Çekmek istediğiniz\ntutarı giriniz.'"];
+    read_amount [shape=parallelogram, label="OKU: cekilecekTutar"];
+    show_error_20 [shape=parallelogram, label="YAZ: 'Hata: Tutar 20 TL ve\nkatları olmalıdır.'"];
+    show_error_balance [shape=parallelogram, label="YAZ: 'Hata: Yetersiz bakiye.'"];
+    show_error_limit [shape=parallelogram, label="YAZ: 'Hata: Günlük limit aşıldı.'"];
+    give_cash [shape=parallelogram, label="YAZ: 'Paranızı ve fişinizi alınız.'\nYAZ: 'Kalan bakiye: ...'", fillcolor=lightgreen];
+    ask_another_op [shape=parallelogram, label="YAZ: 'Başka işlem yapmak\nister misiniz? (E/H)'"];
+    read_another_op [shape=parallelogram, label="OKU: devamCevabi"];
+    show_goodbye [shape=parallelogram, label="YAZ: 'İyi günler dileriz.\nKartınızı alınız.'"];
+
+    init_vars [shape=box, label="Değişkenleri Tanımla\npinDenemeSayisi = 0\npinDogruMu = YANLIS"];
+    set_pin_correct [shape=box, label="İşlem: pinDogruMu = DOGRU"];
+    increment_pin_try [shape=box, label="İşlem: pinDenemeSayisi++"];
+    process_transaction [shape=box, label="İşlem:\nhesapBakiyesi -= cekilecekTutar\nbugunCekilenTutar += cekilecekTutar", fillcolor=lightgreen];
+
+    pin_loop_check [shape=diamond, label="Deneme < 3 VE\nPIN Yanlış mı?", fillcolor=lightcoral];
+    pin_check [shape=diamond, label="PIN Doğru mu?", fillcolor=lightcoral];
+    pin_blocked_check [shape=diamond, label="PIN Hala Yanlış mı?", fillcolor=lightcoral];
+    check_multiple_20 [shape=diamond, label="Tutar 20'nin Katı Değil mi?", fillcolor=lightcoral];
+    check_balance [shape=diamond, label="Bakiye Yetersiz mi?", fillcolor=lightcoral];
+    check_daily_limit [shape=diamond, label="Günlük Limit Aşıldı mı?", fillcolor=lightcoral];
+    check_another_op [shape=diamond, label="Cevap 'H' mi?", fillcolor=lightcoral];
+    
+    // 2. Akış Okları (Edges) - Düğümleri birbirine bağlayan kod
+    
+    start -> init_vars;
+    init_vars -> kart_tak;
+    kart_tak -> pin_loop_check;
+    
+    pin_loop_check -> ask_pin [label="Evet"];
+    ask_pin -> read_pin;
+    read_pin -> pin_check;
+    pin_check -> set_pin_correct [label="Doğru"];
+    pin_check -> increment_pin_try [label="Yanlış"];
+    increment_pin_try -> show_pin_error;
+    show_pin_error -> pin_loop_check;
+    set_pin_correct -> pin_loop_check;
+
+    pin_loop_check -> pin_blocked_check [label="Hayır"];
+    pin_blocked_check -> show_blocked [label="Evet (PIN hala yanlış)"];
+    pin_blocked_check -> main_menu [label="Hayır (PIN doğru)"];
+    show_blocked -> end_node;
+    
+    main_menu -> read_amount;
+    read_amount -> check_multiple_20;
+    
+    check_multiple_20 -> show_error_20 [label="Evet"];
+    check_multiple_20 -> check_balance [label="Hayır"];
+    
+    check_balance -> show_error_balance [label="Evet"];
+    check_balance -> check_daily_limit [label="Hayır"];
+    
+    check_daily_limit -> show_error_limit [label="Evet"];
+    check_daily_limit -> process_transaction [label="Hayır"];
+    
+    process_transaction -> give_cash;
+    
+    give_cash -> ask_another_op;
+    show_error_20 -> ask_another_op;
+    show_error_balance -> ask_another_op;
+    show_error_limit -> ask_another_op;
+
+    ask_another_op -> read_another_op;
+    read_another_op -> check_another_op;
+    check_another_op -> main_menu [label="Hayır (Devam Et)"];
+    check_another_op -> show_goodbye [label="Evet (Bitir)"];
+    
+    show_goodbye -> end_node;
+}
+Kullanıcı:
+pın deneme kısmını daha sadeleştir
+
+Yapay Zeka:
+Elbette, PIN deneme kısmını daha az düğüm kullanarak ve akışı daha sezgisel hale getirerek sadeleştirebiliriz.
+
+Bu yeni versiyonda, PIN sorma, kontrol etme ve deneme hakkını sayma adımları daha kompakt bir döngü içinde birleştirilmiştir. Yanlış PIN girildiğinde, akış "Deneme hakkı kaldı mı?" sorusuna yönelir ve döngü buradan yönetilir.
+
+Aşağıda, PIN deneme bölümü sadeleştirilmiş, tam ve hatasız Graphviz DOT kodunu bulabilirsiniz.
+
+Sadeleştirilmiş Graphviz DOT Kodu
+Kod snippet'i
+
+digraph ATM_Flowchart {
+    // Genel Ayarlar: Akış yönü yukarıdan aşağıya
+    rankdir=TB;
+    node [fontname="Arial", style=filled, fillcolor=lightyellow];
+    edge [fontname="Arial"];
+
+    // 1. Düğüm (Node) Tanımlamaları
+    
+    start [shape=oval, label="BAŞLA", fillcolor=lightblue];
+    end_node [shape=oval, label="BİTİR", fillcolor=lightblue];
+
+    kart_tak [shape=parallelogram, label="YAZ: 'Lütfen kartınızı takınız.'"];
+    
+    // --- SADELEŞTİRİLMİŞ PIN BÖLÜMÜ ---
+    input_pin [shape=parallelogram, label="YAZ: 'Lütfen PIN Giriniz'\nOKU: girilenPIN"];
+    check_pin [shape=diamond, label="PIN Doğru mu?", fillcolor=lightcoral];
+    check_tries [shape=diamond, label="Deneme Hakkı Kaldı mı?\n(Deneme < 3)", fillcolor=lightcoral];
+    show_pin_error_and_increment [shape=box, label="İşlem: Deneme Sayısı++\nYAZ: 'Hatalı PIN'"];
+    // --- BİTİŞ ---
+
+    show_blocked [shape=parallelogram, label="YAZ: 'Kartınız bloke oldu.'"];
+    main_menu [shape=parallelogram, label="YAZ: 'Çekmek istediğiniz\ntutarı giriniz.'"];
+    read_amount [shape=parallelogram, label="OKU: cekilecekTutar"];
+    show_error_20 [shape=parallelogram, label="YAZ: 'Hata: Tutar 20 TL ve\nkatları olmalıdır.'"];
+    show_error_balance [shape=parallelogram, label="YAZ: 'Hata: Yetersiz bakiye.'"];
+    show_error_limit [shape=parallelogram, label="YAZ: 'Hata: Günlük limit aşıldı.'"];
+    give_cash [shape=parallelogram, label="YAZ: 'Paranızı ve fişinizi alınız.'\nYAZ: 'Kalan bakiye: ...'", fillcolor=lightgreen];
+    ask_another_op [shape=parallelogram, label="YAZ: 'Başka işlem yapmak\nister misiniz? (E/H)'"];
+    read_another_op [shape=parallelogram, label="OKU: devamCevabi"];
+    show_goodbye [shape=parallelogram, label="YAZ: 'İyi günler dileriz.\nKartınızı alınız.'"];
+
+    init_vars [shape=box, label="Değişkenleri Tanımla\npinDenemeSayisi = 0"];
+    process_transaction [shape=box, label="İşlem:\nhesapBakiyesi -= cekilecekTutar\nbugunCekilenTutar += cekilecekTutar", fillcolor=lightgreen];
+    
+    check_multiple_20 [shape=diamond, label="Tutar 20'nin Katı Değil mi?", fillcolor=lightcoral];
+    check_balance [shape=diamond, label="Bakiye Yetersiz mi?", fillcolor=lightcoral];
+    check_daily_limit [shape=diamond, label="Günlük Limit Aşıldı mı?", fillcolor=lightcoral];
+    check_another_op [shape=diamond, label="Cevap 'H' mi?", fillcolor=lightcoral];
+    
+    // 2. Akış Okları (Edges) - Düğümleri birbirine bağlayan kod
+    
+    start -> init_vars;
+    init_vars -> kart_tak;
+    
+    // --- SADELEŞTİRİLMİŞ PIN AKIŞI ---
+    kart_tak -> input_pin;
+    input_pin -> check_pin;
+    check_pin -> main_menu [label="Evet (Doğru)"];
+    check_pin -> check_tries [label="Hayır (Yanlış)"];
+    check_tries -> show_pin_error_and_increment [label="Evet (Hak Var)"];
+    show_pin_error_and_increment -> input_pin; // Döngü
+    check_tries -> show_blocked [label="Hayır (Hak Bitti)"];
+    show_blocked -> end_node;
+    // --- BİTİŞ ---
+    
+    main_menu -> read_amount;
+    read_amount -> check_multiple_20;
+    
+    check_multiple_20 -> show_error_20 [label="Evet"];
+    check_multiple_20 -> check_balance [label="Hayır"];
+    
+    check_balance -> show_error_balance [label="Evet"];
+    check_balance -> check_daily_limit [label="Hayır"];
+    
+    check_daily_limit -> show_error_limit [label="Evet"];
+    check_daily_limit -> process_transaction [label="Hayır"];
+    
+    process_transaction -> give_cash;
+    
+    give_cash -> ask_another_op;
+    show_error_20 -> ask_another_op;
+    show_error_balance -> ask_another_op;
+    show_error_limit -> ask_another_op;
+
+    ask_another_op -> read_another_op;
+    read_another_op -> check_another_op;
+    check_another_op -> main_menu [label="Hayır (Devam Et)"];
+    check_another_op -> show_goodbye [label="Evet (Bitir)"];
+    
+    show_goodbye -> end_node;
+}
+Kullanıcı:
+bu işlemi tek bir kodda ver. bitirme kısmını unutma. } işaretini
+
+Yapay Zeka:
+Elbette. PIN deneme kısmı sadeleştirilmiş, tüm okları içeren ve } işaretiyle düzgün bir şekilde bitirilen tek parça Graphviz DOT kodu aşağıdadır.
+
+Bu kodu doğrudan kopyalayıp bir Graphviz görselleştirme aracında kullanabilirsiniz.
+
+Kod snippet'i
+
+digraph ATM_Flowchart {
+    // Genel Ayarlar: Akış yönü yukarıdan aşağıya
+    rankdir=TB;
+    node [fontname="Arial", style=filled, fillcolor=lightyellow];
+    edge [fontname="Arial"];
+
+    // 1. Düğüm (Node) Tanımlamaları
+    
+    start [shape=oval, label="BAŞLA", fillcolor=lightblue];
+    end_node [shape=oval, label="BİTİR", fillcolor=lightblue];
+
+    kart_tak [shape=parallelogram, label="YAZ: 'Lütfen kartınızı takınız.'"];
+    
+    // --- SADELEŞTİRİLMİŞ PIN BÖLÜMÜ ---
+    input_pin [shape=parallelogram, label="YAZ: 'Lütfen PIN Giriniz'\nOKU: girilenPIN"];
+    check_pin [shape=diamond, label="PIN Doğru mu?", fillcolor=lightcoral];
+    check_tries [shape=diamond, label="Deneme Hakkı Kaldı mı?\n(Deneme < 3)", fillcolor=lightcoral];
+    show_pin_error_and_increment [shape=box, label="İşlem: Deneme Sayısı++\nYAZ: 'Hatalı PIN'"];
+    // --- BİTİŞ ---
+
+    show_blocked [shape=parallelogram, label="YAZ: 'Kartınız bloke oldu.'"];
+    main_menu [shape=parallelogram, label="YAZ: 'Çekmek istediğiniz\ntutarı giriniz.'"];
+    read_amount [shape=parallelogram, label="OKU: cekilecekTutar"];
+    show_error_20 [shape=parallelogram, label="YAZ: 'Hata: Tutar 20 TL ve\nkatları olmalıdır.'"];
+    show_error_balance [shape=parallelogram, label="YAZ: 'Hata: Yetersiz bakiye.'"];
+    show_error_limit [shape=parallelogram, label="YAZ: 'Hata: Günlük limit aşıldı.'"];
+    give_cash [shape=parallelogram, label="YAZ: 'Paranızı ve fişinizi alınız.'\nYAZ: 'Kalan bakiye: ...'", fillcolor=lightgreen];
+    ask_another_op [shape=parallelogram, label="YAZ: 'Başka işlem yapmak\nister misiniz? (E/H)'"];
+    read_another_op [shape=parallelogram, label="OKU: devamCevabi"];
+    show_goodbye [shape=parallelogram, label="YAZ: 'İyi günler dileriz.\nKartınızı alınız.'"];
+
+    init_vars [shape=box, label="Değişkenleri Tanımla\npinDenemeSayisi = 0"];
+    process_transaction [shape=box, label="İşlem:\nhesapBakiyesi -= cekilecekTutar\nbugunCekilenTutar += cekilecekTutar", fillcolor=lightgreen];
+    
+    check_multiple_20 [shape=diamond, label="Tutar 20'nin Katı Değil mi?", fillcolor=lightcoral];
+    check_balance [shape=diamond, label="Bakiye Yetersiz mi?", fillcolor=lightcoral];
+    check_daily_limit [shape=diamond, label="Günlük Limit Aşıldı mı?", fillcolor=lightcoral];
+    check_another_op [shape=diamond, label="Cevap 'H' mi?", fillcolor=lightcoral];
+    
+    // 2. Akış Okları (Edges) - Düğümleri birbirine bağlayan kod
+    
+    start -> init_vars;
+    init_vars -> kart_tak;
+    
+    // --- SADELEŞTİRİLMİŞ PIN AKIŞI ---
+    kart_tak -> input_pin;
+    input_pin -> check_pin;
+    check_pin -> main_menu [label="Evet (Doğru)"];
+    check_pin -> check_tries [label="Hayır (Yanlış)"];
+    check_tries -> show_pin_error_and_increment [label="Evet (Hak Var)"];
+    show_pin_error_and_increment -> input_pin; // Döngü
+    check_tries -> show_blocked [label="Hayır (Hak Bitti)"];
+    show_blocked -> end_node;
+    // --- BİTİŞ ---
+    
+    main_menu -> read_amount;
+    read_amount -> check_multiple_20;
+    
+    check_multiple_20 -> show_error_20 [label="Evet"];
+    check_multiple_20 -> check_balance [label="Hayır"];
+    
+    check_balance -> show_error_balance [label="Evet"];
+    check_balance -> check_daily_limit [label="Hayır"];
+    
+    check_daily_limit -> show_error_limit [label="Evet"];
+    check_daily_limit -> process_transaction [label="Hayır"];
+    
+    process_transaction -> give_cash;
+    
+    give_cash -> ask_another_op;
+    show_error_20 -> ask_another_op;
+    show_error_balance -> ask_another_op;
+    show_error_limit -> ask_another_op;
+
+    ask_another_op -> read_another_op;
+    read_another_op -> check_another_op;
+    check_another_op -> main_menu [label="Hayır (Devam Et)"];
+    check_another_op -> show_goodbye [label="Evet (Bitir)"];
+    
+    show_goodbye -> end_node;
+}
+Kullanıcı:
+bu son kodun pseudocod unu ver
+
+Yapay Zeka:
+Elbette, en son sunduğum sadeleştirilmiş Graphviz akış şemasının mantığına birebir uyan pseudocode (sözde kod) aşağıdadır.
+
+Bu kod, PIN doğrulama döngüsünü daha doğrudan bir yapıyla modellemektedir.
+
+BASLA
+
+// 1. Değişkenlerin Tanımlanması
+TANIMLA SAYI: pinDenemeSayisi = 0
+TANIMLA SAYI: hesapBakiyesi = 5000
+TANIMLA SAYI: gunlukLimit = 7500
+TANIMLA SAYI: bugunCekilenTutar = 1000
+TANIMLA SAYI: cekilecekTutar
+TANIMLA METIN: girilenPIN
+TANIMLA METIN: dogruPIN = "1234"
+TANIMLA METIN: devamCevabi
+TANIMLA MANTIKSAL: pinDogrulandi = YANLIS
+
+YAZ "Lütfen kartınızı takınız."
+
+// 2. PIN Doğrulama Döngüsü (Sadeleştirilmiş Yapı)
+DÖNGÜ (pinDenemeSayisi < 3)
+YAZ "Lütfen 4 haneli PIN kodunuzu giriniz:"
+OKU girilenPIN
+
+`EĞER (girilenPIN == dogruPIN) ISE`
+    `pinDogrulandi = DOGRU`
+    `CIK // PIN doğruysa döngüden çık.`
+`DEGILSE`
+    `pinDenemeSayisi = pinDenemeSayisi + 1`
+    `YAZ "Hatalı PIN girdiniz. Kalan deneme hakkınız: ", (3 - pinDenemeSayisi)`
+`EĞER SONU`
+DÖNGÜ SONU
+
+// 3. Ana İşleme Geçiş Kontrolü
+EĞER (pinDogrulandi == DOGRU) ISE
+// 4. Ana İşlem Döngüsü (Başka işlem yapmak için)
+DÖNGÜ (DOĞRU)
+YAZ "Hoş geldiniz. Çekmek istediğiniz tutarı giriniz:"
+OKU cekilecekTutar
+
+    `// 5. Tutar Kontrolleri`
+    `EĞER (cekilecekTutar % 20 != 0) ISE`
+        `YAZ "Hata: Girdiğiniz tutar 20 TL ve katları olmalıdır."`
+    `DEGILSE EĞER (cekilecekTutar > hesapBakiyesi) ISE`
+        `YAZ "Hata: Hesabınızda yeterli bakiye bulunmamaktadır."`
+    `DEGILSE EĞER (cekilecekTutar + bugunCekilenTutar > gunlukLimit) ISE`
+        `YAZ "Hata: Bu işlemle günlük para çekme limitinizi aşacaksınız."`
+    `DEGILSE`
+        `// 6. İşlemin Gerçekleştirilmesi`
+        `hesapBakiyesi = hesapBakiyesi - cekilecekTutar`
+        `bugunCekilenTutar = bugunCekilenTutar + cekilecekTutar`
+        `YAZ "İşleminiz gerçekleştiriliyor..."`
+        `YAZ "Lütfen paranızı ve fişinizi alınız."`
+        `YAZ "İşlem başarılı. Kalan bakiyeniz: ", hesapBakiyesi, " TL"`
+    `EĞER SONU`
+
+    `// 7. Başka İşlem Sorgulama`
+    `YAZ "Başka bir işlem yapmak ister misiniz? (E/H)"`
+    `OKU devamCevabi`
+
+    `EĞER (devamCevabi == "H" VEYA devamCevabi == "h") ISE`
+        `CIK // Ana işlem döngüsünden çık.`
+    `EĞER SONU`
+`DÖNGÜ SONU`
+
+`YAZ "İyi günler dileriz. Lütfen kartınızı almayı unutmayınız."`
+DEGILSE
+YAZ "3 kez hatalı deneme yaptığınız için kartınız bloke olmuştur."
+EĞER SONU
+
+BITIR
