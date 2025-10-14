@@ -1,0 +1,81 @@
+digraph ATM_Flowchart {
+    // Genel Ayarlar: Akış yönü yukarıdan aşağıya
+    rankdir=TB;
+    node [fontname="Arial", style=filled, fillcolor=lightyellow];
+    edge [fontname="Arial"];
+
+    // 1. Düğüm (Node) Tanımlamaları
+    
+    start [shape=oval, label="BAŞLA", fillcolor=lightblue];
+    end_node [shape=oval, label="BİTİR", fillcolor=lightblue];
+
+    kart_tak [shape=parallelogram, label="YAZ: 'Lütfen kartınızı takınız.'"];
+    
+    // --- SADELEŞTİRİLMİŞ PIN BÖLÜMÜ ---
+    input_pin [shape=parallelogram, label="YAZ: 'Lütfen PIN Giriniz'\nOKU: girilenPIN"];
+    check_pin [shape=diamond, label="PIN Doğru mu?", fillcolor=lightcoral];
+    check_tries [shape=diamond, label="Deneme Hakkı Kaldı mı?\n(Deneme < 3)", fillcolor=lightcoral];
+    show_pin_error_and_increment [shape=box, label="İşlem: Deneme Sayısı++\nYAZ: 'Hatalı PIN'"];
+    // --- BİTİŞ ---
+
+    show_blocked [shape=parallelogram, label="YAZ: 'Kartınız bloke oldu.'"];
+    main_menu [shape=parallelogram, label="YAZ: 'Çekmek istediğiniz\ntutarı giriniz.'"];
+    read_amount [shape=parallelogram, label="OKU: cekilecekTutar"];
+    show_error_20 [shape=parallelogram, label="YAZ: 'Hata: Tutar 20 TL ve\nkatları olmalıdır.'"];
+    show_error_balance [shape=parallelogram, label="YAZ: 'Hata: Yetersiz bakiye.'"];
+    show_error_limit [shape=parallelogram, label="YAZ: 'Hata: Günlük limit aşıldı.'"];
+    give_cash [shape=parallelogram, label="YAZ: 'Paranızı ve fişinizi alınız.'\nYAZ: 'Kalan bakiye: ...'", fillcolor=lightgreen];
+    ask_another_op [shape=parallelogram, label="YAZ: 'Başka işlem yapmak\nister misiniz? (E/H)'"];
+    read_another_op [shape=parallelogram, label="OKU: devamCevabi"];
+    show_goodbye [shape=parallelogram, label="YAZ: 'İyi günler dileriz.\nKartınızı alınız.'"];
+
+    init_vars [shape=box, label="Değişkenleri Tanımla\npinDenemeSayisi = 0"];
+    process_transaction [shape=box, label="İşlem:\nhesapBakiyesi -= cekilecekTutar\nbugunCekilenTutar += cekilecekTutar", fillcolor=lightgreen];
+    
+    check_multiple_20 [shape=diamond, label="Tutar 20'nin Katı Değil mi?", fillcolor=lightcoral];
+    check_balance [shape=diamond, label="Bakiye Yetersiz mi?", fillcolor=lightcoral];
+    check_daily_limit [shape=diamond, label="Günlük Limit Aşıldı mı?", fillcolor=lightcoral];
+    check_another_op [shape=diamond, label="Cevap 'H' mi?", fillcolor=lightcoral];
+    
+    // 2. Akış Okları (Edges) - Düğümleri birbirine bağlayan kod
+    
+    start -> init_vars;
+    init_vars -> kart_tak;
+    
+    // --- SADELEŞTİRİLMİŞ PIN AKIŞI ---
+    kart_tak -> input_pin;
+    input_pin -> check_pin;
+    check_pin -> main_menu [label="Evet (Doğru)"];
+    check_pin -> check_tries [label="Hayır (Yanlış)"];
+    check_tries -> show_pin_error_and_increment [label="Evet (Hak Var)"];
+    show_pin_error_and_increment -> input_pin; // Döngü
+    check_tries -> show_blocked [label="Hayır (Hak Bitti)"];
+    show_blocked -> end_node;
+    // --- BİTİŞ ---
+    
+    main_menu -> read_amount;
+    read_amount -> check_multiple_20;
+    
+    check_multiple_20 -> show_error_20 [label="Evet"];
+    check_multiple_20 -> check_balance [label="Hayır"];
+    
+    check_balance -> show_error_balance [label="Evet"];
+    check_balance -> check_daily_limit [label="Hayır"];
+    
+    check_daily_limit -> show_error_limit [label="Evet"];
+    check_daily_limit -> process_transaction [label="Hayır"];
+    
+    process_transaction -> give_cash;
+    
+    give_cash -> ask_another_op;
+    show_error_20 -> ask_another_op;
+    show_error_balance -> ask_another_op;
+    show_error_limit -> ask_another_op;
+
+    ask_another_op -> read_another_op;
+    read_another_op -> check_another_op;
+    check_another_op -> main_menu [label="Hayır (Devam Et)"];
+    check_another_op -> show_goodbye [label="Evet (Bitir)"];
+    
+    show_goodbye -> end_node;
+}
