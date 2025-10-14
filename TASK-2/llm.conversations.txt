@@ -1,0 +1,12 @@
+KONUŞMA KAYDI – Online Alışveriş Sepet Sistemi
+
+Soru 1: Online Alışveriş Sepet Sistemi Sistem Açıklaması E-ticaret sitesinde ürün ekleme, sepet yönetimi ve ödeme sürecini modelleyin. Sistem Gereksinimleri: Kullanıcı giriş kontrolü (koşul) ürün kategorileri arasında gezinme (döngü) ürün sepete ekleme Stok kontrolü (koşul) Sepeti görüntüleme ve düzenleme (döngü) indirim kodu uygulanabilir (koşul) Minimum 50 TL kontrolü (koşul) Kargo ücreti hesaplama (koşul: ≥200 TL ücretsiz) ödeme yöntemi seçimi (koşul) Sipariş onayı ticaret sitesinde sepet yönetimi ve ödeme sistemini adım adım açıkla. kullanıcı girişi,ürün ekleme,stok kontrolü,indirim kodu,kargo esaplama ve ödeme aşmalarını içermeli. Bu sistemi pseudocode olarak yaz. Döngüler için DÖNGÜ, koşullar için EĞER-İSE kullan. Her adımı Başla ile başlar, BİTİR ile bitir. Tüm noktalarını belirt.
+
+Soru 2: Pseudocode'u Graphviz DOT formatına çevir. rankdir=TB kullan. Karar noktalarında EVET/HAYIR etiketlerini unutma DOT formatında yazarken aşağıda verdiğim örnekleri kullan. Sonuna } koymayı unutma (Basit akış örneği ve şekil tanımları verilmişti.)
+
+
+Soru 3: Bu diyagramı sadeleştir
+
+
+Soru 4: Benim sorduğum soruları ve kendi cevaplarını bir txt dosyası haline getir
+
