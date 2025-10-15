@@ -1,0 +1,83 @@
+digraph G {
+rankdir=TB; // Yukarıdan aşağıya
+
+// --- Başlangıç ---
+start [shape=oval, label="BASLA"];
+
+// --- Giriş ---
+login_input [shape=parallelogram, label="Öğrenci No ve Şifre Gir"];
+login_check [shape=diamond, label="Kimlik Doğrulama Başarılı mı?"];
+login_fail [shape=box, label="Hatalı giriş! Sistemden çık"];
+gano_get [shape=box, label="GANO ve Ders Listesini Getir"];
+list_show [shape=parallelogram, label="Ders Listesini Göster"];
+
+// --- Ders Seçim Döngüsü ---
+loop_choice [shape=diamond, label="İşlem Seçimi:\n1-Ekle, 2-Çıkar, 3-Onay"];
+add_course [shape=parallelogram, label="Ders Kodu Gir"];
+remove_course [shape=parallelogram, label="Silinecek Ders Kodu Gir"];
+confirm_summary [shape=box, label="Kayıt Özetini Göster"];
+
+// --- Ekleme Kontrolleri ---
+kontenjan [shape=diamond, label="Kontenjan Uygun mu?"];
+onkosul [shape=diamond, label="Ön Koşul Sağlandı mı?"];
+zaman [shape=diamond, label="Zaman Çakışması Var mı?"];
+kredi [shape=diamond, label="Toplam Kredi ≤ 35 mi?"];
+ders_ekle [shape=box, label="Ders Başarıyla Eklendi"];
+ekle_hata [shape=box, label="Kontrol Başarısız, Ekleme İptal"];
+
+// --- Çıkarma İşlemi ---
+remove_exist [shape=diamond, label="Ders Listede Var mı?"];
+remove_ok [shape=box, label="Ders Başarıyla Çıkarıldı"];
+remove_no [shape=box, label="Bu dersi seçmediniz!"];
+
+// --- Danışman Onayı ---
+advisor [shape=diamond, label="GANO < 2.5 mi?"];
+advisor_yes [shape=box, label="Kayıt Danışman Onayına Gönderildi"];
+advisor_no [shape=box, label="Kayıt Otomatik Onaylandı"];
+
+// --- Döngü ---
+again [shape=diamond, label="Başka işlem yapmak ister misiniz?"];
+end [shape=oval, label="BITIR"];
+
+// --- Akış ---
+start -> login_input -> login_check;
+login_check -> login_fail [label="HAYIR"];
+login_check -> gano_get [label="EVET"];
+gano_get -> list_show -> loop_choice;
+
+// --- Ders Ekleme Akışı ---
+loop_choice -> add_course [label="1-Ekle"];
+add_course -> kontenjan;
+kontenjan -> onkosul [label="EVET"];
+kontenjan -> ekle_hata [label="HAYIR"];
+onkosul -> zaman [label="EVET"];
+onkosul -> ekle_hata [label="HAYIR"];
+zaman -> kredi [label="HAYIR", style=dashed]; // "Var mı?" ters yorum
+zaman -> ekle_hata [label="EVET"];
+kredi -> ders_ekle [label="EVET"];
+kredi -> ekle_hata [label="HAYIR"];
+ders_ekle -> again;
+ekle_hata -> again;
+
+// --- Ders Çıkarma Akışı ---
+loop_choice -> remove_course [label="2-Çıkar"];
+remove_course -> remove_exist;
+remove_exist -> remove_ok [label="EVET"];
+remove_exist -> remove_no [label="HAYIR"];
+remove_ok -> again;
+remove_no -> again;
+
+// --- Kayıt Onaylama Akışı ---
+loop_choice -> confirm_summary [label="3-Onayla"];
+confirm_summary -> advisor;
+advisor -> advisor_yes [label="EVET"];
+advisor -> advisor_no [label="HAYIR"];
+advisor_yes -> again;
+advisor_no -> again;
+
+// --- Döngü bağlantısı ---
+again -> loop_choice [label="EVET"];
+again -> end [label="HAYIR"];
+
+login_fail -> end;
+}
