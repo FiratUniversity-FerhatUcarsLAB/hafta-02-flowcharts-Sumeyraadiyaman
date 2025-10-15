@@ -1,0 +1,80 @@
+digraph G {
+rankdir=TB; // Yukarıdan aşağıya
+
+// --- Başlangıç ---
+start [shape=oval, label="BASLA"];
+
+// --- Ana Menü ---
+menu [shape=parallelogram, label="1-Randevu Al\n2-Tahlil Sonuçlarını Gör\n0-Çıkış"];
+decision_main [shape=diamond, label="Seçim?"];
+
+// --- Randevu Modülü ---
+r_input [shape=parallelogram, label="TC No Gir"];
+r_check [shape=diamond, label="TC geçerli mi?"];
+r_invalid [shape=box, label="Geçersiz TC, çık"];
+r_poli [shape=parallelogram, label="Poliklinik seç"];
+r_doktor [shape=parallelogram, label="Doktor seç"];
+r_saat [shape=parallelogram, label="Uygun saat seç"];
+r_confirm [shape=diamond, label="Onaylıyor musunuz?"];
+r_yes [shape=box, label="Randevuyu kaydet\nSMS gönder"];
+r_no [shape=box, label="Randevu iptal edildi"];
+
+// --- Tahlil Modülü ---
+t_input [shape=parallelogram, label="TC No Gir"];
+t_check [shape=diamond, label="TC geçerli mi?"];
+t_invalid [shape=box, label="Geçersiz TC, çık"];
+t_exists [shape=diamond, label="Tahlil var mı?"];
+t_none [shape=box, label="Tahlil bulunamadı"];
+t_ready [shape=diamond, label="Sonuç hazır mı?"];
+t_wait [shape=box, label="Sonuçlar henüz hazır değil"];
+t_show [shape=parallelogram, label="Tahlil sonuçlarını göster"];
+t_pdf [shape=diamond, label="PDF indirilsin mi?"];
+t_download [shape=box, label="PDF oluştur ve indir"];
+t_end [shape=box, label="Tahlil işlemi bitti"];
+
+// --- Döngü (devam etmek ister misiniz?) ---
+again [shape=diamond, label="Başka işlem yapmak ister misiniz?"];
+end [shape=oval, label="BITIR"];
+
+// --- Ana Akış ---
+start -> menu -> decision_main;
+
+// --- Karar dalları ---
+decision_main -> r_input [label="1-Randevu Al"];
+decision_main -> t_input [label="2-Tahlil Sonuçlarını Gör"];
+decision_main -> end [label="0-Çıkış"];
+decision_main -> menu [label="Diğer", style=dashed];
+
+// --- Randevu Modülü Akışı ---
+r_input -> r_check;
+r_check -> r_invalid [label="HAYIR"];
+r_check -> r_poli [label="EVET"];
+r_poli -> r_doktor -> r_saat -> r_confirm;
+r_confirm -> r_yes [label="EVET"];
+r_confirm -> r_no [label="HAYIR"];
+r_yes -> again;
+r_no -> again;
+r_invalid -> again;
+
+// --- Tahlil Modülü Akışı ---
+t_input -> t_check;
+t_check -> t_invalid [label="HAYIR"];
+t_check -> t_exists [label="EVET"];
+t_exists -> t_none [label="HAYIR"];
+t_exists -> t_ready [label="EVET"];
+t_ready -> t_wait [label="HAYIR"];
+t_ready -> t_show [label="EVET"];
+t_show -> t_pdf;
+t_pdf -> t_download [label="EVET"];
+t_pdf -> t_end [label="HAYIR"];
+t_download -> t_end;
+t_none -> again;
+t_wait -> again;
+t_end -> again;
+t_invalid -> again;
+
+// --- Döngü bağlantısı ---
+again -> menu [label="EVET"];
+again -> end [label="HAYIR"];
+
+}
