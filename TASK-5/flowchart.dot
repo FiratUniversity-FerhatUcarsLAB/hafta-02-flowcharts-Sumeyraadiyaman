@@ -1,0 +1,58 @@
+digraph G {
+rankdir=TB; // Yukarıdan aşağıya akış yönü
+
+// --- Düğümler ---
+start [shape=oval, label="BAŞLA"];
+sys_active [shape=diamond, label="Sistem aktif mi?"];
+read_sensors [shape=box, label="Sensörleri oku\n(Hareket, Kapı, Pencere)"];
+threat_detected [shape=diamond, label="Herhangi bir sensör tehdit algıladı mı?"];
+camera_on [shape=box, label="Kamera aktivasyonu ve kayıt başlat"];
+owner_home [shape=diamond, label="Ev sahibi evde mi?"];
+low_alarm [shape=box, label="Alarm seviyesi = 1 (DÜŞÜK)"];
+high_alarm [shape=diamond, label="Kapı/Pencere sensörü tetiklendi mi?"];
+set_alarm2 [shape=box, label="Alarm seviyesi = 2 (ORTA)"];
+set_alarm3 [shape=box, label="Alarm seviyesi = 3 (YÜKSEK)"];
+alarm_on [shape=box, label="Alarmı çalıştır (Sesli uyarı)"];
+notifications [shape=parallelogram, label="Bildirim Gönder\n(SMS + Email + App)"];
+reset_check [shape=diamond, label="Alarm sıfırlandı mı?"];
+reset_alarm [shape=box, label="Alarm sıfırla, kamera kaydını durdur"];
+continue_alarm [shape=box, label="Alarm aktif kalıyor, tekrar kontrol et"];
+no_threat [shape=box, label="Sistem normal izleme modunda"];
+wait_loop [shape=box, label="Bekle (2 saniye)"];
+end [shape=oval, label="Sistem Devam Ediyor"];
+
+// --- Akışlar ---
+start -> sys_active;
+sys_active -> read_sensors [label="EVET"];
+sys_active -> end [label="HAYIR"];
+
+read_sensors -> threat_detected;
+
+threat_detected -> camera_on [label="EVET"];
+threat_detected -> no_threat [label="HAYIR"];
+
+camera_on -> owner_home;
+
+owner_home -> low_alarm [label="EVET"];
+owner_home -> high_alarm [label="HAYIR"];
+
+low_alarm -> alarm_on;
+high_alarm -> set_alarm3 [label="EVET"];
+high_alarm -> set_alarm2 [label="HAYIR"];
+
+set_alarm3 -> alarm_on;
+set_alarm2 -> alarm_on;
+
+alarm_on -> notifications;
+notifications -> reset_check;
+
+reset_check -> reset_alarm [label="EVET"];
+reset_check -> continue_alarm [label="HAYIR"];
+
+reset_alarm -> wait_loop;
+continue_alarm -> wait_loop;
+no_threat -> wait_loop;
+
+wait_loop -> sys_active [label="Sürekli"]; // Sonsuz döngü geri dönüş
+
+}
