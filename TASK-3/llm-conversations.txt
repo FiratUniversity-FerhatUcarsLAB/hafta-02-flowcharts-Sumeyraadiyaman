@@ -1,0 +1,47 @@
+KONU: Hastane Randevu Alma ve Tahlil Sonuçlarını Görme Sistemi
+
+---
+
+👤 Kullanıcı:
+Hastane randevu alma ve tahlil sonuçlarınba erişim sistemini modelleyin.
+Sistem Gereksinimleri;
+Hasta kimlik doğrulama (TC no)
+İşlem seçimi: 1-Randevu al, 2-Tahlil sonuçlarını gör(koşul)
+Randevu modülü: Poliklinik seçimi, doktor listesi, uygun saatler (döngü)
+Randevu onayı ve SMS gönderimi 
+Tahlil modülü: Tahlil var mı kontrolü (koşul)
+Sonuç hazır mı kontrolü (koşul)
+Sonuç görüntüleme veya bekleme mesajı
+Sonuçları pdf indir seçeneği
+Başka işlem yapmak ister misiniz? (döngü)
+Modül bir: Hastane randevu sistemi için algoritma: kimlik doğrulama, poliklinik seçimi ,doktor listesi görüntüleme, uygun saatleri gösterme, randevu onaylama ve SMS gönderme. Pseudocode yaz.
+Modül iki: Tahlil sonucu görüntüleme sistemi: kimlik doğrulama, tahlil varlığı kontrolü, sonuç hazır mı kontrolü, görüntüleme veya bekleme mesajı, PDF indirme. Pseudocode yaz.
+Ana menü ile iki modülü birleştirin.
+
+---
+
+🤖 ChatGPT:
+(Ana menü, Randevu Modülü, Tahlil Modülü pseudocode’ları verilmiştir.)
+
+---
+
+👤 Kullanıcı:
+Pseudocode'u Graphviz DOT formatına çevir. rankdir=TB kullan. Karar noktalarında EVET/HAYIR etiketlerini unutma.
+
+---
+
+🤖 ChatGPT:
+(Graphviz DOT kodu verilmiştir.)
+
+---
+
+👤 Kullanıcı:
+“Hastane Randevu Alma ve Tahlil Sonuçlarını Görme Sistemi”nin birleştirilmiş pseudocode’unu bana ver.
+
+---
+
+🤖 ChatGPT:
+(Tümleşik pseudocode paylaşılmıştır.)
+
+---
+SON
