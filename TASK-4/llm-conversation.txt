@@ -1,0 +1,54 @@
+KONU: Öğrenci Ders Kayıt Sistemi Modelleme
+
+Kullanıcı: Ögrenci ders kayıt sisteminin tüm kontrollerini ve kurallarını modelleyin.
+Sistem Gereksinimleri:
+- Öğrenrenci girişi (öğrenci no + şifre)
+- Ders listesini görüntüleme (döngü)
+- Her ders için:
+  • Kontenjan kontrolü (koşul)
+  • Ön koşul dersi kontrolü (koşul)
+  • Zaman çakışması kontrolü (koşul)
+  • Kredi limiti kontrolü (toplam ≤ 35) (koşul)
+- Ders ekleme/çıkarma (döngü)
+- Danışman onayı gerekli mi? (GPA < 2.5 ise) (koşul)
+- Kayıt özeti gösterme ve kayıt onaylama
+
+ChatGPT (GPT-5):
+Genel Yapı:
+Öğrenci, sisteme öğrenci numarası ve şifreyle giriş yapar. Ders listesini görüntüler. 
+Ekleme veya çıkarma işlemleri yapılırken kontenjan, ön koşul, zaman çakışması 
+ve kredi limiti kontrolleri uygulanır. GANO < 2.5 ise kayıt danışman onayına gönderilir. 
+Son aşamada kayıt özeti görüntülenir ve öğrenci onay verir.
+
+Kontrol Mekanizması:
+- Kontenjan kontrolü
+- Ön koşul kontrolü
+- Zaman çakışması kontrolü
+- Kredi limiti kontrolü
+- Danışman onayı (GANO < 2.5)
+
+Pseudocode:
+1. BAŞLA
+2. GİRİŞ YAP (öğrenci no, şifre)
+3. Eğer giriş başarısızsa → Bitir
+4. Ders listesi görüntüle
+5. Tekrarla:
+     a. Kullanıcı işlem seç (Ekle, Çıkar, Onayla)
+     b. Eğer "Ekle" ise:
+          - Kontenjan kontrolü
+          - Ön koşul kontrolü
+          - Zaman çakışması kontrolü
+          - Kredi ≤ 35 kontrolü
+          - Uygun ise derse ekle, değilse hata göster
+     c. Eğer "Çıkar" ise dersi listeden kaldır
+     d. Eğer "Onayla" ise danışman onayı (GANO < 2.5?) kontrol et
+6. Kayıt özetini göster
+7. Onay verildiğinde kayıt tamamla
+8. BİTİR
+
+ÖĞRENCİ:
+
+Pseudocode'u Graphviz DOT formatına çevir. rankdir=TB kullan. Karar noktalarında EVET/HAYIR etiketlerini unutma DOT formatında yazarken aşağıda verdiğim örnekleri kullan. Sonuna } koymayı unutma Basit Akış Örneği: digraph G { rankdir=TB; // Yukarıdan aşağıya start [shape=oval, label="BAS¸LA"]; input [shape=parallelogram, label="OKU x"]; process [shape=box, label="y = x * 2"]; output [shape=parallelogram, label="YAZ y"]; end [shape=oval, label="B_ IT_ IR"]; start-> input-> process-> output-> end; } Temel Şekiller: oval- Başla/Bitir parallelogram- Girdi/Çıktı box- işlem- diamond- karar F.U- ¨ O.M.K (TF Yazılım Müh.) Hafta 2- Akış Diyagramları Lab 5 Ekim 2025 6/32 DOT Dili- Karar ve Döngü Karar Yapısı: decision [shape=diamond, label="x > 0?"]; yes [shape=box, label="Pozitif"]; no [shape=box, label="Negatif"]; decision-> yes [label="EVET"]; decision-> no [label="HAYIR"]; Döngü Yapısı: loop [shape=diamond, label="sayac < 10?"]; process [shape=box, label="_ İşlem yap"]; loop-> process [label="EVET"]; process-> loop [label="Geri dön"]; loop-> end [label="HAYIR"];
+
+
+
